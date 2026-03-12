@@ -150,7 +150,7 @@
             document.getElementById("results").innerHTML = 
                 '<div class="loading">Loading recommendations...</div>';
 
-            const apiUrl = `https://func-eap-dev-gjavggg2b4fdbpc7.australiaeast-01.azurewebsites.net/api/recommend?q1=${q1}&q2=${q2}&q3=${q3}`;
+            const apiUrl = `https://func-eap-sand-e5h6fpbrd7bpaye8.australiaeast-01.azurewebsites.net/api/recommend?q1=${q1}&q2=${q2}&q3=${q3}`;
             
             fetch(apiUrl)
                 .then(res => res.json())
