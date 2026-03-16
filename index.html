@@ -92,6 +92,19 @@
             background-color: #ffebee;
             border-radius: 4px;
         }
+        .support-message {
+            margin-top: 20px;
+            padding: 14px;
+            background-color: #f0f7ff;
+            border-left: 4px solid #2f7de1;
+            color: #1f3b5c;
+            line-height: 1.5;
+        }
+        .support-message a {
+            color: #1b5db8;
+            font-weight: bold;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -155,9 +168,11 @@
             fetch(apiUrl)
                 .then(res => res.json())
                 .then(data => {
+                    let resultsHtml = '';
+
                     if(data.resources && data.resources.length > 0){
                         const introText = data.title || 'Base on your circumstance, please find the recommended resources as following';
-                        let resultsHtml = `<h2>${introText}</h2>`;
+                        resultsHtml = `<h2>${introText}</h2>`;
                         data.resources.forEach(resource => {
                             resultsHtml += `
                                 <div class="result-item">
@@ -167,11 +182,24 @@
                                 </div>
                             `;
                         });
-                        document.getElementById("results").innerHTML = resultsHtml;
+
                     } else {
-                        document.getElementById("results").innerHTML = 
-                            '<div class="error">No resources found for your selection.</div>';
+                        resultsHtml = '<div class="error">No resources found for your selection.</div>';
                     }
+
+                    if (data.supportMessage && data.bookingUrl) {
+                        const linkText = data.bookingLinkText || 'Book an Online Session';
+                        const suffix = data.supportMessageSuffix ? ` ${data.supportMessageSuffix}` : '';
+                        resultsHtml += `
+                            <div class="support-message">
+                                ${data.supportMessage}
+                                <a href="${data.bookingUrl}" target="_blank" rel="noopener noreferrer">${linkText}</a>
+                                ${suffix}
+                            </div>
+                        `;
+                    }
+
+                    document.getElementById("results").innerHTML = resultsHtml;
                 })
                 .catch(error => {
                     document.getElementById("results").innerHTML = 
