@@ -156,12 +156,14 @@
                 .then(res => res.json())
                 .then(data => {
                     if(data.resources && data.resources.length > 0){
-                        let resultsHtml = '<h2>Recommended Resources:</h2>';
+                        const introText = data.title || 'Base on your circumstance, please find the recommended resources as following';
+                        let resultsHtml = `<h2>${introText}</h2>`;
                         data.resources.forEach(resource => {
                             resultsHtml += `
                                 <div class="result-item">
-                                    <strong>${resource.title}</strong>
-                                    <a href="${resource.url}" target="_blank">${resource.url}</a>
+                                    <strong>
+                                        <a href="${resource.url}" target="_blank" rel="noopener noreferrer">${resource.title}</a>
+                                    </strong>
                                 </div>
                             `;
                         });
