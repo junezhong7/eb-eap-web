@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EAP MVP</title>
+    <title>Find Resources</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -96,7 +96,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>How can we help you?</h1>
+        <h1>Find Resources</h1>
         
         <div class="question-group">
             <label for="q1">1. What area do you work in?</label>
@@ -129,7 +129,7 @@
             </select>
         </div>
 
-        <button onclick="getRecommendations()">Submit</button>
+        <button onclick="getRecommendations()">Get Recommendations</button>
 
         <div id="results"></div>
     </div>
@@ -161,7 +161,7 @@
                             resultsHtml += `
                                 <div class="result-item">
                                     <strong>${resource.title}</strong>
-                                    <a href="${resource.link}" target="_blank">${resource.link}</a>
+                                    <a href="${resource.url}" target="_blank">${resource.url}</a>
                                 </div>
                             `;
                         });
