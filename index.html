@@ -20,7 +20,17 @@
         }
         h1 {
             color: #333;
+            margin-bottom: 0;
+            text-align: center;
+        }
+        .header {
             margin-bottom: 30px;
+        }
+        .logo {
+            display: block;
+            width: min(100%, 320px);
+            height: auto;
+            margin: 0 auto 12px;
         }
         .question-group {
             margin-bottom: 25px;
@@ -109,7 +119,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Find Resources</h1>
+        <div class="header">
+            <img class="logo" src="src/Tools%20For%20The%20Tough%20Days.png" alt="Tools For The Tough Days logo">
+            <h1>Find Resources</h1>
+        </div>
         
         <div class="question-group">
             <label for="q1">1. What area do you work in?</label>
