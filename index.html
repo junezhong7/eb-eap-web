@@ -115,6 +115,27 @@
             font-weight: bold;
             text-decoration: underline;
         }
+        .resources-columns {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        .resource-column {
+            flex: 1;
+            min-width: 0;
+        }
+        .resource-column h3 {
+            color: #26777B;
+            margin-bottom: 10px;
+            font-size: 15px;
+            border-bottom: 2px solid #26777B;
+            padding-bottom: 6px;
+        }
+        @media (max-width: 540px) {
+            .resources-columns {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
@@ -203,15 +224,34 @@
                     if(data.resources && data.resources.length > 0){
                         const introText = data.title || 'Base on your circumstance, please find the recommended resources as following';
                         resultsHtml = `<h2>${introText}</h2>`;
-                        data.resources.forEach(resource => {
-                            resultsHtml += `
+
+                        const pdfs = data.resources.filter(r => r.title.toLowerCase().endsWith('.pdf'));
+                        const videos = data.resources.filter(r => r.title.toLowerCase().endsWith('.mp4'));
+                        const others = data.resources.filter(r => !r.title.toLowerCase().endsWith('.pdf') && !r.title.toLowerCase().endsWith('.mp4'));
+
+                        function renderItems(list) {
+                            return list.map(resource => `
                                 <div class="result-item">
                                     <strong>
                                         <a href="${resource.url}" target="_blank" rel="noopener noreferrer">${resource.title}</a>
                                     </strong>
                                 </div>
-                            `;
-                        });
+                            `).join('');
+                        }
+
+                        if (pdfs.length > 0 || videos.length > 0) {
+                            resultsHtml += `<div class="resources-columns">`;
+                            if (pdfs.length > 0) {
+                                resultsHtml += `<div class="resource-column"><h3>Documents</h3>${renderItems(pdfs)}</div>`;
+                            }
+                            if (videos.length > 0) {
+                                resultsHtml += `<div class="resource-column"><h3>Videos</h3>${renderItems(videos)}</div>`;
+                            }
+                            resultsHtml += `</div>`;
+                        }
+                        if (others.length > 0) {
+                            resultsHtml += renderItems(others);
+                        }
 
                     } else {
                         resultsHtml = '<div class="error">No resources found for your selection.</div>';
