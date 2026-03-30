@@ -18,6 +18,52 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        .container.locked {
+            filter: blur(2px);
+            pointer-events: none;
+            user-select: none;
+        }
+        .password-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+        .password-card {
+            width: min(420px, 100%);
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 22px;
+        }
+        .password-card h2 {
+            margin-top: 0;
+            color: #26777B;
+            font-size: 22px;
+        }
+        .password-card p {
+            color: #555;
+            margin-bottom: 12px;
+            line-height: 1.45;
+        }
+        .password-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d5d5d5;
+            border-radius: 4px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+        .password-error {
+            margin-top: 10px;
+            min-height: 20px;
+            color: #d32f2f;
+            font-size: 14px;
+        }
         h1 {
             color: #333;
             margin-bottom: 0;
@@ -139,7 +185,17 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div id="passwordOverlay" class="password-overlay">
+        <div class="password-card">
+            <h2>Protected Page</h2>
+            <p>Please enter the password to continue.</p>
+            <input id="passwordInput" class="password-input" type="password" autocomplete="off" placeholder="Enter password">
+            <button id="unlockButton" type="button">Unlock</button>
+            <div id="passwordError" class="password-error"></div>
+        </div>
+    </div>
+
+    <div id="appContainer" class="container locked" aria-hidden="true">
         <div class="header">
             <img class="logo" src="src/Tools%20For%20The%20Tough%20Days.png" alt="Tools For The Tough Days logo">
             <h1>Find Resources</h1>
@@ -199,6 +255,53 @@
     </div>
 
     <script>
+        const FRONTEND_PASSWORD = 'go4peace'; // Change this to your desired password
+        const UNLOCK_STORAGE_KEY = 'eb_eap_frontend_unlock_v1';
+
+        function setLockedState(isLocked) {
+            const overlay = document.getElementById('passwordOverlay');
+            const app = document.getElementById('appContainer');
+            if (isLocked) {
+                overlay.style.display = 'flex';
+                app.classList.add('locked');
+                app.setAttribute('aria-hidden', 'true');
+            } else {
+                overlay.style.display = 'none';
+                app.classList.remove('locked');
+                app.setAttribute('aria-hidden', 'false');
+            }
+        }
+
+        function unlockPage() {
+            const input = document.getElementById('passwordInput');
+            const error = document.getElementById('passwordError');
+            const password = input.value;
+
+            if (password === FRONTEND_PASSWORD) {
+                localStorage.setItem(UNLOCK_STORAGE_KEY, '1');
+                error.textContent = '';
+                setLockedState(false);
+                input.value = '';
+                return;
+            }
+
+            error.textContent = 'Incorrect password. Please try again.';
+            input.focus();
+            input.select();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const alreadyUnlocked = localStorage.getItem(UNLOCK_STORAGE_KEY) === '1';
+            setLockedState(!alreadyUnlocked);
+
+            document.getElementById('unlockButton').addEventListener('click', unlockPage);
+            document.getElementById('passwordInput').addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    unlockPage();
+                }
+            });
+        });
+
         function getRecommendations(){
             const q1 = document.getElementById('q1').value;
             const q2 = document.getElementById('q2').value;
