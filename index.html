@@ -257,6 +257,24 @@
     <script>
         const FRONTEND_PASSWORD = 'go4peace'; // Change this to your desired password
         const UNLOCK_STORAGE_KEY = 'eb_eap_frontend_unlock_v1';
+        const API_BASE_BY_ENV = {
+            dev: 'https://func-eap-dev-gjavggg2b4fdbpc7.australiaeast-01.azurewebsites.net/api/recommend',
+            sand: 'https://func-eap-sand-e5h6fpbrd7bpaye8.australiaeast-01.azurewebsites.net/api/recommend'
+        };
+
+        function getCurrentEnv() {
+            const envFromQuery = new URLSearchParams(window.location.search).get('env');
+            if (envFromQuery && API_BASE_BY_ENV[envFromQuery]) {
+                return envFromQuery;
+            }
+
+            // Auto-fallback by hostname; adjust rule if your domain naming differs.
+            if (window.location.hostname.includes('dev')) {
+                return 'dev';
+            }
+
+            return 'sand';
+        }
 
         function setLockedState(isLocked) {
             const overlay = document.getElementById('passwordOverlay');
@@ -317,7 +335,9 @@
             document.getElementById("results").innerHTML = 
                 '<div class="loading">Loading recommendations...</div>';
 
-            const apiUrl = `https://func-eap-sand-e5h6fpbrd7bpaye8.australiaeast-01.azurewebsites.net/api/recommend?q1=${q1}&q2=${q2}&q3=${q3}`;
+            const env = getCurrentEnv();
+            const apiBaseUrl = API_BASE_BY_ENV[env] || API_BASE_BY_ENV.sand;
+            const apiUrl = `${apiBaseUrl}?q1=${encodeURIComponent(q1)}&q2=${encodeURIComponent(q2)}&q3=${encodeURIComponent(q3)}`;
             
             fetch(apiUrl)
                 .then(res => res.json())
