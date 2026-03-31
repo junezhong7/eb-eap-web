@@ -261,16 +261,28 @@
             dev: 'https://func-eap-dev-gjavggg2b4fdbpc7.australiaeast-01.azurewebsites.net/api/recommend',
             sand: 'https://func-eap-sand-e5h6fpbrd7bpaye8.australiaeast-01.azurewebsites.net/api/recommend'
         };
+        const HOST_ENV_MAP = {
+            'red-plant-0e4eee100.4.azurestaticapps.net': 'dev',
+            'polite-water-0ff8cca00.1.azurestaticapps.net': 'sand'
+        };
 
         function getCurrentEnv() {
-            const envFromQuery = new URLSearchParams(window.location.search).get('env');
+            const envFromQuery = (new URLSearchParams(window.location.search).get('env') || '').toLowerCase();
             if (envFromQuery && API_BASE_BY_ENV[envFromQuery]) {
                 return envFromQuery;
             }
 
+            const host = (window.location.hostname || '').toLowerCase();
+            if (HOST_ENV_MAP[host] && API_BASE_BY_ENV[HOST_ENV_MAP[host]]) {
+                return HOST_ENV_MAP[host];
+            }
+
             // Auto-fallback by hostname; adjust rule if your domain naming differs.
-            if (window.location.hostname.includes('dev')) {
+            if (host.includes('dev')) {
                 return 'dev';
+            }
+            if (host.includes('sand')) {
+                return 'sand';
             }
 
             return 'sand';
